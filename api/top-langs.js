@@ -30,6 +30,7 @@ module.exports = async (req, res) => {
     locale,
     border_radius,
     border_color,
+    affiliations,
   } = req.query;
   let topLangs;
 
@@ -48,6 +49,7 @@ module.exports = async (req, res) => {
       username,
       parseArray(exclude_repo),
       parseArray(hide),
+      parseArray(affiliations || 'OWNER'),
     );
 
     const cacheSeconds = clampValue(

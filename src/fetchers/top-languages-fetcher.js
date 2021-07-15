@@ -6,10 +6,10 @@ const fetcher = (variables, token) => {
   return request(
     {
       query: `
-      query userInfo($login: String!) {
+      query userInfo($login: String!, $affiliations: [RepositoryAffiliation]) {
         user(login: $login) {
           # fetch only owner repos & not forks
-          repositories(ownerAffiliations: OWNER, isFork: false, first: 100) {
+          repositories(ownerAffiliations: $affiliations, isFork: false, first: 100) {
             nodes {
               name
               languages(first: 10, orderBy: {field: SIZE, direction: DESC}) {
@@ -34,10 +34,10 @@ const fetcher = (variables, token) => {
   );
 };
 
-async function fetchTopLanguages(username, exclude_repo = []) {
+async function fetchTopLanguages(username, exclude_repo = [], hide, affiliations = ['OWNER'], exclude_orgs = []) {
   if (!username) throw Error("Invalid username");
 
-  const res = await retryer(fetcher, { login: username });
+  const res = await retryer(fetcher, { login: username, affiliations });
 
   if (res.data.errors) {
     logger.error(res.data.errors);
